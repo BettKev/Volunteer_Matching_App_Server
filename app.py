@@ -2,7 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import os
-from models.user import db  # Import the db object from user.py
+from models.user import db  # Import db from user.py
 
 app = Flask(__name__)
 
@@ -17,14 +17,21 @@ app.config['JWT_SECRET_KEY'] = 'secret_key'  # Optional JWT secret key (if using
 # Initialize the db with the app
 db.init_app(app)
 
+def create_db():
+    """Function to create the database."""
+    if not os.path.exists('app.db'):
+        print("Database does not exist, creating...")
+        db.create_all()
+    else:
+        print("Database already exists.")
+
 @app.route("/")
 def home():
     return {"message": "Welcome to Dexters Lab API!"}, 200
 
 if __name__ == "__main__":
-    # Create the database and tables if they don't already exist
     with app.app_context():
-        db.create_all()
+        create_db()  # Create the database and tables if they don't already exist
 
     # Get the port from environment variable or use 5000 by default
     port = int(os.environ.get("PORT", 5000))
