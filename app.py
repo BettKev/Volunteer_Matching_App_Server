@@ -6,7 +6,7 @@ from models.user import db, User  # Import db from user.py
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager, create_access_token
 from werkzeug.security import check_password_hash
-
+from datetime import timedelta
 
 
 app = Flask(__name__)
@@ -19,6 +19,8 @@ CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'  # SQLite database (for development)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Disable modification tracking
 app.config['JWT_SECRET_KEY'] = 'secret_key'  # Optional JWT secret key
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)  # Token expires in 1 hour
+
 
 jwt = JWTManager(app)
 
