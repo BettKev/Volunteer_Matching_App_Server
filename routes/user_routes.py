@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from models.user import User, db
 from werkzeug.security import check_password_hash
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
 user_routes = Blueprint("user_routes", __name__)
 
@@ -63,18 +63,20 @@ def login_user():
         return jsonify({"error": "Invalid password."}), 401
 
     # Create JWT token
-    access_token = create_access_token(identity=user.user_id)
+    access_token = create_access_token(identity=str(user.user_id))
 
     return jsonify({
         "message": "Login successful!",
         "access_token": access_token  # Send the token to the frontend
     }), 200
 
-# Logout Route
+# Logout Route (Protected)
 @user_routes.route("/logout", methods=["POST"])
+@jwt_required()  # Require a valid JWT token for this route
 def logout_user():
     """
     Route to log out the user.
-    This simply tells the frontend to remove the JWT token from storage.
+    Requires a valid JWT token.
     """
-    return jsonify({"message": "Logout successful!"}), 200
+    user_id = get_jwt_identity()  # Get the current user's identity from the token
+    return jsonify({"message": f"User {user_id} logged out successfully!"}), 200

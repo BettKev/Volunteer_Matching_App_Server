@@ -5,8 +5,7 @@ import os
 from models.user import db # Import db from user.py
 from routes.user_routes import user_routes  # Import user routes
 from flask_migrate import Migrate
-from flask_jwt_extended import JWTManager, create_access_token
-from werkzeug.security import check_password_hash
+from flask_jwt_extended import JWTManager
 from datetime import timedelta
 
 
