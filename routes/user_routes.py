@@ -8,13 +8,7 @@ user_routes = Blueprint("user_routes", __name__)
 # User registration route
 @user_routes.route("/register", methods=["POST"])
 def register_user():
-    """
-    Route to register a new user.
-    Expects JSON payload with 'name', 'email', 'password', and 'role'.
-    """
-    data = request.get_json()  # Parse JSON payload
-
-    # Validate input
+    data = request.get_json()
     name = data.get("name")
     email = data.get("email")
     password = data.get("password")
@@ -23,12 +17,10 @@ def register_user():
     if not name or not email or not password or not role:
         return jsonify({"error": "All fields (name, email, password, role) are required."}), 400
 
-    # Check if email already exists
     existing_user = User.query.filter_by(email=email).first()
     if existing_user:
         return jsonify({"error": "A user with this email already exists."}), 400
 
-    # Create a new user
     try:
         new_user = User(name=name, email=email, password=password, role=role)
         db.session.add(new_user)
@@ -36,47 +28,61 @@ def register_user():
 
         return jsonify({
             "message": "User registered successfully!",
-            "user_id": new_user.user_id  # Assuming `user_id` is a field in the User model
+            "user_id": new_user.user_id
         }), 201
     except Exception as e:
-        db.session.rollback()  # Rollback the session in case of an error
+        db.session.rollback()
         return jsonify({"error": "An error occurred while registering the user.", "details": str(e)}), 500
-    
-# Login Route
+
+# Login route
 @user_routes.route("/login", methods=["POST"])
 def login_user():
     data = request.get_json()
     email = data.get("email")
     password = data.get("password")
 
-    # Validate input
     if not email or not password:
         return jsonify({"error": "Email and password are required."}), 400
 
-    # Check if user exists
     user = User.query.filter_by(email=email).first()
     if not user:
         return jsonify({"error": "User not found."}), 404
 
-    # Check if password is correct (assuming password is hashed)
     if not check_password_hash(user.password, password):
         return jsonify({"error": "Invalid password."}), 401
 
-    # Create JWT token
     access_token = create_access_token(identity=str(user.user_id))
 
     return jsonify({
         "message": "Login successful!",
-        "access_token": access_token  # Send the token to the frontend
+        "access_token": access_token
     }), 200
 
-# Logout Route (Protected)
+# Logout route
 @user_routes.route("/logout", methods=["POST"])
-@jwt_required()  # Require a valid JWT token for this route
+@jwt_required()
 def logout_user():
-    """
-    Route to log out the user.
-    Requires a valid JWT token.
-    """
-    user_id = get_jwt_identity()  # Get the current user's identity from the token
+    user_id = get_jwt_identity()
     return jsonify({"message": f"User {user_id} logged out successfully!"}), 200
+
+# Fetch single user route
+@user_routes.route("/details", methods=["GET"])
+@jwt_required()  # Require valid JWT token
+def fetch_user_details():
+    """
+    Fetch the details of the currently authenticated user.
+    """
+    user_id = get_jwt_identity()  # Get the user ID from the JWT token
+    user = User.query.filter_by(user_id=user_id).first()
+
+    if not user:
+        return jsonify({"error": "User not found."}), 404
+
+    # Return user details (excluding sensitive data like password)
+    return jsonify({
+        "user_id": user.user_id,
+        "name": user.name,
+        "email": user.email,
+        "name": user.name,
+        "role": user.role
+    }), 200
