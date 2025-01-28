@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from models.user import User, db
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
 user_routes = Blueprint("user_routes", __name__)
@@ -116,7 +116,7 @@ def update_user():
     #         return jsonify({"error": "Email is already in use by another user."}), 400
     #     user.email = email
     if password:
-        user.password = password  # Ensure this is hashed if you're not hashing elsewhere
+        user.password = generate_password_hash(password)  # Ensure this is hashed if you're not hashing elsewhere
 
     try:
         db.session.commit()  # Save changes to the database
