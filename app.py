@@ -4,6 +4,9 @@ from flask_cors import CORS
 import os
 from models.user import db, User  # Import db from user.py
 from flask_migrate import Migrate
+from flask_jwt_extended import JWTManager, create_access_token
+from werkzeug.security import check_password_hash
+
 
 
 app = Flask(__name__)
@@ -17,14 +20,54 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'  # SQLite database (f
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Disable modification tracking
 app.config['JWT_SECRET_KEY'] = 'secret_key'  # Optional JWT secret key
 
+jwt = JWTManager(app)
+
 # Initialize the db and Flask-Migrate with the app
 db.init_app(app)
 migrate = Migrate(app, db)
 
+# Test route
 @app.route("/")
-def home():
-    return {"message": "Welcome to Volunteer Matching App!"}, 200
+def index():
+    return """
+    <html>
+        <head>
+            <title>Volunteer Matching App</title>
+            <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+        </head>
+        <body>
+            <div class="container mt-5">
+                <h1 class="text-center mb-4">Welcome to the Volunteer Matching App</h1>
+                
+                <p>This API allows organizations to manage volunteers, projects, and applications. Below are the key endpoints:</p>
+                
+                <div class="alert alert-info">
+                    <h4 class="alert-heading">Available Endpoints:</h4>
+                    <ul>
+                        <li><strong><code>/register</code></strong>: <em>POST</em> - Register a new user (volunteer or organization)</li>
+                        <li><strong><code>/login</code></strong>: <em>POST</em> - Login with email and password</li>
+                        <li><strong><code>/user/<user_id></code></strong>: <em>GET</em> - Get user details by ID</li>
+                        <li><strong><code>/project</code></strong>: <em>GET</em> - List all available projects</li>
+                        <li><strong><code>/application</code></strong>: <em>POST</em> - Submit an application for a project</li>
+                    </ul>
+                </div>
 
+                <p class="mt-4">For detailed information on each endpoint, refer to the API documentation.</p>
+
+                <div class="alert alert-warning">
+                    <strong>Note:</strong> This app uses Flask for the backend and React for the frontend. 
+                    Make sure to have the frontend running on <code>http://localhost:3000</code> and the backend on <code>http://localhost:5000</code>.
+                </div>
+            </div>
+            
+            <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.3/dist/umd/popper.min.js"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        </body>
+    </html>
+    """
+
+# User registration route
 @app.route("/register", methods=["POST"])
 def register_user():
     """
@@ -60,6 +103,40 @@ def register_user():
     except Exception as e:
         db.session.rollback()  # Rollback the session in case of an error
         return jsonify({"error": "An error occurred while registering the user.", "details": str(e)}), 500
+    
+# Login Route
+@app.route("/login", methods=["POST"])
+def login_user():
+    data = request.get_json()
+    email = data.get("email")
+    password = data.get("password")
+
+    # Validate input
+    if not email or not password:
+        return jsonify({"error": "Email and password are required."}), 400
+
+    # Check if user exists
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return jsonify({"error": "User not found."}), 404
+
+    # Check if password is correct (assuming password is hashed)
+    if not check_password_hash(user.password, password):
+        return jsonify({"error": "Invalid password."}), 401
+
+    # Create JWT token
+    access_token = create_access_token(identity=user.user_id)
+
+    return jsonify({
+        "message": "Login successful!",
+        "access_token": access_token  # Send the token to the frontend
+    }), 200
+
+# # Dashboard Route (protected by JWT)
+# @app.route("/dashboard", methods=["GET"])
+# @jwt.required  # This decorator ensures that the user must be authenticated
+# def dashboard():
+#     return jsonify({"message": "Welcome to the Dashboard!"})
 
 if __name__ == "__main__":
     with app.app_context():
