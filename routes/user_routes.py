@@ -86,3 +86,42 @@ def fetch_user_details():
         "name": user.name,
         "role": user.role
     }), 200
+
+# Update user route
+@user_routes.route("/update", methods=["PUT"])
+@jwt_required()  # Require valid JWT token
+def update_user():
+    """
+    Update the details of the currently authenticated user.
+    """
+    user_id = get_jwt_identity()  # Get the user ID from the JWT token
+    user = User.query.filter_by(user_id=user_id).first()
+
+    if not user:
+        return jsonify({"error": "User not found."}), 404
+
+    data = request.get_json()
+
+    # Validate and update fields
+    name = data.get("name")
+    email = data.get("email")
+    password = data.get("password")
+
+    if name:
+        user.name = name
+    # if email:
+    #     # Check if the email is already taken by another user
+    #     existing_user = User.query.filter_by(email=email).first()
+    #     if existing_user and existing_user.user_id != user_id:
+    #         return jsonify({"error": "Email is already in use by another user."}), 400
+    #     user.email = email
+    if password:
+        user.password = password  # Ensure this is hashed if you're not hashing elsewhere
+
+    try:
+        db.session.commit()  # Save changes to the database
+        return jsonify({"message": "User updated successfully!"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": "An error occurred while updating the user.", "details": str(e)}), 500
+
