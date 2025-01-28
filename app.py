@@ -132,6 +132,16 @@ def login_user():
         "access_token": access_token  # Send the token to the frontend
     }), 200
 
+# Logout Route
+@app.route("/logout", methods=["POST"])
+def logout_user():
+    """
+    Route to log out the user.
+    This simply tells the frontend to remove the JWT token from storage.
+    """
+    return jsonify({"message": "Logout successful!"}), 200
+
+
 # # Dashboard Route (protected by JWT)
 # @app.route("/dashboard", methods=["GET"])
 # @jwt.required  # This decorator ensures that the user must be authenticated
