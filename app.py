@@ -5,7 +5,9 @@ import os
 from models.user import db, User  # Import db from user.py
 from flask_migrate import Migrate
 
+
 app = Flask(__name__)
+
 
 # Enable CORS
 CORS(app)
@@ -21,7 +23,7 @@ migrate = Migrate(app, db)
 
 @app.route("/")
 def home():
-    return {"message": "Welcome to Dexters Lab API!"}, 200
+    return {"message": "Welcome to Volunteer Matching App!"}, 200
 
 @app.route("/register", methods=["POST"])
 def register_user():
@@ -46,19 +48,24 @@ def register_user():
         return jsonify({"error": "A user with this email already exists."}), 400
 
     # Create a new user
-    new_user = User(name=name, email=email, password=password, role=role)
-    db.session.add(new_user)
-    db.session.commit()
+    try:
+        new_user = User(name=name, email=email, password=password, role=role)
+        db.session.add(new_user)
+        db.session.commit()
 
-    return jsonify({"message": "User registered successfully!", "user_id": new_user.user_id}), 201
+        return jsonify({
+            "message": "User registered successfully!",
+            "user_id": new_user.user_id  # Assuming `user_id` is a field in the User model
+        }), 201
+    except Exception as e:
+        db.session.rollback()  # Rollback the session in case of an error
+        return jsonify({"error": "An error occurred while registering the user.", "details": str(e)}), 500
 
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()  # Ensure tables are created before running the app
     app.run(debug=True)
 
-
-if __name__ == "__main__":
     # Get the port from environment variable or use 5000 by default
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
