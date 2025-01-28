@@ -143,18 +143,10 @@ def logout_user():
     """
     return jsonify({"message": "Logout successful!"}), 200
 
-
-# # Dashboard Route (protected by JWT)
-# @app.route("/dashboard", methods=["GET"])
-# @jwt.required  # This decorator ensures that the user must be authenticated
-# def dashboard():
-#     return jsonify({"message": "Welcome to the Dashboard!"})
-
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()  # Ensure tables are created before running the app
-    app.run(debug=True)
 
     # Get the port from environment variable or use 5000 by default
     port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(debug=True, host="0.0.0.0", port=port)
