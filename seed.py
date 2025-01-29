@@ -28,6 +28,10 @@ def seed_data():
             User(name="Charlie Brown", email="charlie@example.com", password="mypassword", role="volunteer"),
             User(name="Diana Prince", email="diana@example.com", password="wonderwoman", role="organization"),
         ]
+        
+        for i in range(16):  # Adding 16 more users
+            users.append(User(name=f"User{i}", email=f"user{i}@example.com", password=f"password{i}", role="volunteer" if i % 2 == 0 else "organization"))
+        
         db.session.add_all(users)
         db.session.commit()
 
@@ -40,6 +44,10 @@ def seed_data():
             Project(title="Teach Coding to Kids", description="A volunteer-based coding bootcamp.", organization_id=organizations[1].user_id, status="Pending"),
             Project(title="Plant Trees", description="An effort to increase green cover in the city.", organization_id=organizations[0].user_id, status="Completed"),
         ]
+        
+        for i in range(17):  # Adding 17 more projects
+            projects.append(Project(title=f"Project{i}", description=f"Description for project {i}", organization_id=organizations[i % len(organizations)].user_id, status="Active" if i % 3 == 0 else "Pending"))
+        
         db.session.add_all(projects)
         db.session.commit()
 
@@ -53,6 +61,10 @@ def seed_data():
             Application(user_id=volunteers[1].user_id, project_id=projects[1].project_id, status="Approved"),
             Application(user_id=volunteers[0].user_id, project_id=projects[2].project_id, status="Rejected"),
         ]
+        
+        for i in range(27):  # Adding 27 more applications
+            applications.append(Application(user_id=volunteers[i % len(volunteers)].user_id, project_id=projects[i % len(projects)].project_id, status="Approved" if i % 2 == 0 else "Pending"))
+        
         db.session.add_all(applications)
         db.session.commit()
 
