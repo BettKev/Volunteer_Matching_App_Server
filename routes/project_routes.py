@@ -71,3 +71,32 @@ def update_project(project_id):
     db.session.commit()
 
     return jsonify({'message': 'Project updated successfully', 'project_id': project.project_id}), 200
+
+
+# Route to delete project (Only organizations can delete their own projects)
+@project_routes.route('/projects/<int:project_id>', methods=['DELETE'])
+@jwt_required()  # Require authentication
+def delete_project(project_id):
+    # Get logged-in user's ID from JWT token
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+
+    # Check if the user exists and is an organization
+    if not user or user.role != 'organization':
+        return jsonify({'message': 'Unauthorized: Only organizations can delete projects'}), 403
+
+    # Find the project by ID
+    project = Project.query.get(project_id)
+
+    if not project:
+        return jsonify({'message': 'Project not found'}), 404
+
+    # Check if the logged-in user is the owner of the project
+    if project.organization_id != user.user_id:
+        return jsonify({'message': 'Unauthorized: You can only delete your own projects'}), 403
+
+    # Delete project from the database
+    db.session.delete(project)
+    db.session.commit()
+
+    return jsonify({'message': 'Project deleted successfully'}), 200
