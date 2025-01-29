@@ -2,7 +2,7 @@ from flask import *
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import os
-from models.user import db # Import db from user.py
+from models.models import User, Project, db # Import models
 from routes.user_routes import user_routes  # Import user routes
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
