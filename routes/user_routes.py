@@ -128,4 +128,5 @@ def delete_user():
         return jsonify({"message": "User account deleted successfully!"}), 200
     except Exception as e:
         db.session.rollback()
+        print(f"Error while deleting user: {e}")  # Log the error to the console or a log file
         return jsonify({"error": "An error occurred while deleting the user.", "details": str(e)}), 500

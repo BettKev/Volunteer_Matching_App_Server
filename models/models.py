@@ -15,10 +15,10 @@ class User(db.Model):
     role = db.Column(db.String(50), nullable=False)  # volunteer or organization
 
     # Relationship to projects (for organizations)
-    projects = db.relationship('Project', backref='organization', lazy=True)
+    projects = db.relationship('Project', backref='organization', lazy=True, cascade="all, delete-orphan")
 
     # Relationship to applications (for volunteers)
-    applications = db.relationship('Application', backref='applicant', lazy=True)
+    applications = db.relationship('Application', backref='applicant', lazy=True, cascade="all, delete-orphan")
 
     def __init__(self, name, email, password, role):
         self.name = name
@@ -41,7 +41,7 @@ class Project(db.Model):
     status = db.Column(db.String(50), nullable=False, default='Pending')  # Example statuses: Pending, Active, Completed
 
     # Relationship to applications
-    applications = db.relationship('Application', backref='project', lazy=True, cascade='all, delete-orphan')
+    applications = db.relationship('Application', backref='project', lazy=True, cascade="all, delete-orphan")
 
     def __init__(self, title, description, organization_id, status='Pending'):
         self.title = title
