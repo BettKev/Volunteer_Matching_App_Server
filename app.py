@@ -29,7 +29,7 @@ db.init_app(app)
 migrate = Migrate(app, db)
 
 # Register Blueprints
-app.register_blueprint(user_routes, url_prefix="/user")
+app.register_blueprint(user_routes)
 
 # Test route
 @app.route("/")
