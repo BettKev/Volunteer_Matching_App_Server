@@ -32,3 +32,42 @@ def create_project():
     db.session.commit()
 
     return jsonify({'message': 'Project created successfully', 'project_id': new_project.project_id}), 201
+
+
+# Route to update project (Only organizations can update)
+@project_routes.route('/projects/<int:project_id>', methods=['PUT'])
+@jwt_required()  # Require authentication
+def update_project(project_id):
+    # Get logged-in user's ID from JWT token
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+
+    # Check if the user exists and is an organization
+    if not user or user.role != 'organization':
+        return jsonify({'message': 'Unauthorized: Only organizations can update projects'}), 403
+
+    # Find the project by ID
+    project = Project.query.get(project_id)
+
+    if not project:
+        return jsonify({'message': 'Project not found'}), 404
+
+    # Check if the logged-in user is the owner of the project
+    if project.organization_id != user.user_id:
+        return jsonify({'message': 'Unauthorized: You can only update your own projects'}), 403
+
+    # Get data from request
+    data = request.get_json()
+    title = data.get('title', project.title)  # Keep existing title if not provided
+    description = data.get('description', project.description)  # Keep existing description if not provided
+    status = data.get('status', project.status)  # Keep existing status if not provided
+
+    # Update project details
+    project.title = title
+    project.description = description
+    project.status = status
+
+    # Commit changes to the database
+    db.session.commit()
+
+    return jsonify({'message': 'Project updated successfully', 'project_id': project.project_id}), 200
