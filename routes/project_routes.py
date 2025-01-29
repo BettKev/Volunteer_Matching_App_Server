@@ -57,18 +57,18 @@ def delete_project(project_id):
     user = User.query.get(user_id)
     
     if not user or user.role != 'organization':
-        return jsonify({'message': 'Unauthorized: Only organizations can delete projects'}), 403
+        return jsonify({'success': False, 'message': 'Unauthorized: Only organizations can delete projects'}), 403
     
     project = Project.query.get(project_id)
     if not project:
-        return jsonify({'message': 'Project not found'}), 404
+        return jsonify({'success': False, 'message': 'Project not found'}), 404
     
     if project.organization_id != user.user_id:
-        return jsonify({'message': 'Unauthorized: You can only delete your own projects'}), 403
+        return jsonify({'success': False, 'message': 'Unauthorized: You can only delete your own projects'}), 403
     
     db.session.delete(project)
     db.session.commit()
-    return jsonify({'message': 'Project deleted successfully'}), 200
+    return jsonify({'success': True, 'message': 'Project deleted successfully'}), 200
 
 # New route to fetch all projects (Accessible to any authenticated user)
 @project_routes.route('/projects', methods=['GET'])
@@ -88,3 +88,29 @@ def get_all_projects():
     ]
     
     return jsonify({'projects': project_list}), 200
+
+# fetch a single project
+@project_routes.route('/projects/<int:project_id>', methods=['GET'])
+@jwt_required()
+def get_organization_projects():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+
+    if not user or user.role != 'organization':
+        return jsonify({'message': 'Unauthorized: Only organizations can view their projects'}), 403
+
+    projects = Project.query.filter_by(organization_id=user.user_id).all()
+
+    project_list = [
+        {
+            'project_id': project.project_id,
+            'title': project.title,
+            'description': project.description,
+            'organization_id': project.organization_id,
+            'status': project.status
+        } 
+        for project in projects
+    ]
+
+    return jsonify({'projects': project_list}), 200
+
