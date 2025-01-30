@@ -5,6 +5,7 @@ import os
 from models.models import User, Project, db # Import models
 from routes.user_routes import user_routes  # Import user routes
 from routes.project_routes import project_routes # Import project routes
+from routes.application_routes import application_routes # Import application routes
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 from datetime import timedelta
@@ -32,6 +33,7 @@ migrate = Migrate(app, db)
 # Register Blueprints
 app.register_blueprint(user_routes)
 app.register_blueprint(project_routes)
+app.register_blueprint(application_routes)
 
 # Test route
 @app.route("/")
