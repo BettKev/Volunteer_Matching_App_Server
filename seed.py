@@ -23,14 +23,29 @@ def seed_data():
 
         # Seed Users (Organizations & Volunteers)
         users = [
-            User(name="Alice Johnson", email="alice@example.com", password="password123", role="volunteer"),
-            User(name="Bob Smith", email="bob@example.com", password="securepassword", role="organization"),
-            User(name="Charlie Brown", email="charlie@example.com", password="mypassword", role="volunteer"),
-            User(name="Diana Prince", email="diana@example.com", password="wonderwoman", role="organization"),
+            User(name="Sophia Turner", email="sophia.turner@greenearth.org", password="volunteerpass123", role="volunteer"),
+            User(name="John Patterson", email="john.patterson@techforgood.org", password="techpass987", role="organization"),
+            User(name="Olivia Carter", email="olivia.carter@helpinghands.com", password="communitylove456", role="volunteer"),
+            User(name="David Bennett", email="david.bennett@ecoalliance.org", password="greenworld321", role="organization"),
+            User(name="Emily Rodriguez", email="emily.rodriguez@animalrights.org", password="petlovers789", role="volunteer"),
+            User(name="Michael Clark", email="michael.clark@codingforkids.org", password="codingpass567", role="organization"),
+            User(name="Isabella Martinez", email="isabella.martinez@childcarefoundation.org", password="helpingkids234", role="volunteer"),
+            User(name="James Anderson", email="james.anderson@disasterrelief.com", password="reliefpass123", role="organization"),
+            User(name="Lily Moore", email="lily.moore@foodbank.org", password="givingfood456", role="volunteer"),
+            User(name="Matthew Lee", email="matthew.lee@unitedglobal.org", password="peaceforall987", role="organization"),
+            # Additional Organizations to ensure there are 10
+            User(name="Nathaniel Green", email="nathaniel.green@restoreearth.org", password="earthkeeper123", role="organization"),
+            User(name="Laura Gomez", email="laura.gomez@techskillsforgood.com", password="skillsfortech789", role="organization"),
+            User(name="Daniel Young", email="daniel.young@healthforall.org", password="healthforall123", role="organization"),
+            User(name="Sophia Wells", email="sophia.wells@communitycare.org", password="carecommunity987", role="organization"),
+            User(name="Robert King", email="robert.king@greeninitiative.org", password="greenlife456", role="organization"),
+            # Additional Volunteers to ensure there are 10
+            User(name="Charlotte Harris", email="charlotte.harris@volunteer.org", password="charitypass123", role="volunteer"),
+            User(name="Daniel Foster", email="daniel.foster@volunteerhelp.com", password="volunteerpass456", role="volunteer"),
+            User(name="Grace Walker", email="grace.walker@humanity.org", password="helpinghand123", role="volunteer"),
+            User(name="Lucas Walker", email="lucas.walker@helpinghands.com", password="makingadifference789", role="volunteer"),
+            User(name="Ava Johnson", email="ava.johnson@communitycare.org", password="givinglove234", role="volunteer"),
         ]
-        
-        for i in range(16):  # Adding 16 more users
-            users.append(User(name=f"User{i}", email=f"user{i}@example.com", password=f"password{i}", role="volunteer" if i % 2 == 0 else "organization"))
         
         db.session.add_all(users)
         db.session.commit()
@@ -40,13 +55,17 @@ def seed_data():
 
         # Seed Projects (Owned by Organizations)
         projects = [
-            Project(title="Clean the Park", description="A community cleanup initiative.", organization_id=organizations[0].user_id, status="Active"),
-            Project(title="Teach Coding to Kids", description="A volunteer-based coding bootcamp.", organization_id=organizations[1].user_id, status="Pending"),
-            Project(title="Plant Trees", description="An effort to increase green cover in the city.", organization_id=organizations[0].user_id, status="Completed"),
+            Project(title="Community Park Cleanup", description="Organizing a weekend cleanup drive in the local park to keep it beautiful and safe for families.", organization_id=organizations[0].user_id, status="Active"),
+            Project(title="Tech for Good: Coding Bootcamp", description="Providing coding workshops for underprivileged youth in urban communities to create job opportunities in the tech industry.", organization_id=organizations[1].user_id, status="Pending"),
+            Project(title="Green Energy Solutions", description="Promoting renewable energy projects and education about sustainable energy solutions to reduce environmental impact.", organization_id=organizations[2].user_id, status="Active"),
+            Project(title="Urban Farming Initiative", description="Building community gardens in urban areas to promote healthy eating and sustainable living practices.", organization_id=organizations[3].user_id, status="Pending"),
+            Project(title="Animal Shelter Support", description="Volunteering and fundraising for local animal shelters to help them care for abandoned animals and improve their facilities.", organization_id=organizations[4].user_id, status="Completed"),
+            Project(title="Coding for All: Computer Literacy", description="A series of workshops aimed at teaching basic computer literacy to senior citizens and people with disabilities.", organization_id=organizations[5].user_id, status="Active"),
+            Project(title="Childhood Education Access", description="An outreach program providing educational materials and mentoring services to children from disadvantaged families.", organization_id=organizations[6].user_id, status="Active"),
+            Project(title="Disaster Relief Fundraising", description="Organizing fundraisers and donation drives to support victims of natural disasters worldwide.", organization_id=organizations[7].user_id, status="Pending"),
+            Project(title="Feeding the Homeless", description="A regular program that prepares and delivers nutritious meals to homeless individuals in the local community.", organization_id=organizations[8].user_id, status="Active"),
+            Project(title="Global Peace Education", description="Campaigns and initiatives designed to foster peace and conflict resolution skills for people in conflict zones.", organization_id=organizations[9].user_id, status="Completed"),
         ]
-        
-        for i in range(17):  # Adding 17 more projects
-            projects.append(Project(title=f"Project{i}", description=f"Description for project {i}", organization_id=organizations[i % len(organizations)].user_id, status="Active" if i % 3 == 0 else "Pending"))
         
         db.session.add_all(projects)
         db.session.commit()
@@ -56,15 +75,10 @@ def seed_data():
         projects = Project.query.all()
 
         # Seed Applications (Volunteers applying for projects)
-        applications = [
-            Application(user_id=volunteers[0].user_id, project_id=projects[0].project_id, status="Pending"),
-            Application(user_id=volunteers[1].user_id, project_id=projects[1].project_id, status="Approved"),
-            Application(user_id=volunteers[0].user_id, project_id=projects[2].project_id, status="Rejected"),
-        ]
-        
-        for i in range(27):  # Adding 27 more applications
-            applications.append(Application(user_id=volunteers[i % len(volunteers)].user_id, project_id=projects[i % len(projects)].project_id, status="Approved" if i % 2 == 0 else "Pending"))
-        
+        applications = []
+        for i in range(min(len(volunteers), len(projects))):  # Avoid index out of range
+            applications.append(Application(user_id=volunteers[i].user_id, project_id=projects[i].project_id, status="Pending"))
+
         db.session.add_all(applications)
         db.session.commit()
 
