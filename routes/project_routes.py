@@ -89,28 +89,29 @@ def get_all_projects():
     
     return jsonify({'projects': project_list}), 200
 
-# fetch a single project
 @project_routes.route('/projects/<int:project_id>', methods=['GET'])
 @jwt_required()
-def get_organization_projects():
+def get_project(project_id):
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
 
     if not user or user.role != 'organization':
         return jsonify({'message': 'Unauthorized: Only organizations can view their projects'}), 403
 
-    projects = Project.query.filter_by(organization_id=user.user_id).all()
+    # Fetch the specific project
+    project = Project.query.filter_by(project_id=project_id, organization_id=user.user_id).first()
 
-    project_list = [
-        {
-            'project_id': project.project_id,
-            'title': project.title,
-            'description': project.description,
-            'organization_id': project.organization_id,
-            'status': project.status
-        } 
-        for project in projects
-    ]
+    if not project:
+        return jsonify({'message': 'Project not found or unauthorized access'}), 404
 
-    return jsonify({'projects': project_list}), 200
+    project_data = {
+        'project_id': project.project_id,
+        'title': project.title,
+        'description': project.description,
+        'organization_id': project.organization_id,
+        'status': project.status
+    }
+
+    return jsonify(project_data), 200
+
 
