@@ -123,7 +123,7 @@ def index():
 <body>
     <div class="container">
         <h1>Volunteer Matching API Documentation</h1>
-        <p>Welcome to the Volunteer Matching API! This API helps organizations and volunteers connect through projects. Below is a list of available endpoints.</p>
+        <p>Welcome to the Volunteer Matching API! This API helps organizations and volunteers connect through projects. Below is a list of available endpoints with their usage details.</p>
 
         <div class="section">
             <h2>Authentication</h2>
@@ -131,12 +131,20 @@ def index():
             <div class="endpoint">
                 <h3>Register</h3>
                 <p><code>POST /register</code></p>
+                <p>Registers a new user (volunteer or organization).</p>
                 <pre>
+Request:
 {
     "name": "John Doe",
     "email": "john@example.com",
     "password": "password123",
     "role": "volunteer"
+}
+
+Response:
+{
+    "message": "User registered successfully",
+    "user_id": 123
 }
                 </pre>
             </div>
@@ -144,17 +152,64 @@ def index():
             <div class="endpoint">
                 <h3>Login</h3>
                 <p><code>POST /login</code></p>
+                <p>Authenticates a user and returns a JWT token.</p>
                 <pre>
+Request:
 {
     "email": "john@example.com",
     "password": "password123"
+}
+
+Response:
+{
+    "access_token": "jwt_token_here"
 }
                 </pre>
             </div>
 
             <div class="endpoint">
-                <h3>Logout</h3>
-                <p><code>POST /logout</code> <span class="auth-required">Requires JWT Token</span></p>
+                <h3>Fetch User Details</h3>
+                <p><code>GET /details</code> <span class="auth-required">Requires JWT Token</span></p>
+                <p>Fetches the authenticated user's details.</p>
+                <pre>
+Response:
+{
+    "user_id": 123,
+    "name": "John Doe",
+    "email": "john@example.com",
+    "role": "volunteer"
+}
+                </pre>
+            </div>
+
+            <div class="endpoint">
+                <h3>Update User</h3>
+                <p><code>PUT /update</code> <span class="auth-required">Requires JWT Token</span></p>
+                <p>Updates the authenticated user's details.</p>
+                <pre>
+Request:
+{
+    "name": "John Doe Updated",
+    "password": "newpassword"
+}
+
+Response:
+{
+    "message": "User updated successfully!"
+}
+                </pre>
+            </div>
+
+            <div class="endpoint">
+                <h3>Delete User Account</h3>
+                <p><code>DELETE /delete</code> <span class="auth-required">Requires JWT Token</span></p>
+                <p>Deletes the currently authenticated user's account.</p>
+                <pre>
+Response:
+{
+    "message": "User account deleted successfully!"
+}
+                </pre>
             </div>
         </div>
 
@@ -165,9 +220,16 @@ def index():
                 <h3>Create a Project</h3>
                 <p><code>POST /projects</code> <span class="auth-required">Only organizations</span></p>
                 <pre>
+Request:
 {
     "title": "Community Cleanup",
     "description": "A project to clean up the park."
+}
+
+Response:
+{
+    "message": "Project created successfully",
+    "project_id": 45
 }
                 </pre>
             </div>
@@ -175,35 +237,55 @@ def index():
             <div class="endpoint">
                 <h3>View All Projects</h3>
                 <p><code>GET /projects</code> <span class="auth-required">Authenticated users</span></p>
+                <pre>
+Response:
+[
+    {
+        "project_id": 45,
+        "title": "Community Cleanup",
+        "description": "A project to clean up the park.",
+        "organization_id": 12
+    }
+]
+                </pre>
             </div>
-
-            <div class="endpoint">
-                <h3>Update a Project</h3>
-                <p><code>PUT /projects/:id</code> <span class="auth-required">Only project owners</span></p>
-            </div>
-
-            <div class="endpoint">
-                <h3>Delete a Project</h3>
-                <p><code>DELETE /projects/:id</code> <span class="auth-required">Only project owners</span></p>
-            </div>
-        </div>
-
-        <div class="section">
-            <h2>Applications</h2>
 
             <div class="endpoint">
                 <h3>Apply for a Project</h3>
                 <p><code>POST /projects/:id/apply</code> <span class="auth-required">Only volunteers</span></p>
+                <pre>
+Response:
+{
+    "message": "Application submitted successfully!"
+}
+                </pre>
             </div>
 
             <div class="endpoint">
                 <h3>View User Applications</h3>
                 <p><code>GET /user/applications</code> <span class="auth-required">Only volunteers</span></p>
+                <pre>
+Response:
+[
+    {
+        "project_id": 45,
+        "project_title": "Community Cleanup",
+        "project_description": "A project to clean up the park.",
+        "project_status": "Open"
+    }
+]
+                </pre>
             </div>
 
             <div class="endpoint">
                 <h3>Cancel Application</h3>
                 <p><code>DELETE /projects/:id/cancel</code> <span class="auth-required">Only volunteers</span></p>
+                <pre>
+Response:
+{
+    "message": "Application canceled successfully!"
+}
+                </pre>
             </div>
         </div>
 
@@ -211,9 +293,8 @@ def index():
             <p>For any questions or support, contact us at <a href="mailto:support@volunteerapi.com">support@volunteerapi.com</a></p>
             <p>&copy; 2025 Volunteer Matching API</p>
         </div>
-    </div>
-</body>
-</html>
+    </d
+
 
     """
 
