@@ -111,7 +111,6 @@ bettkev-volunteer_matching_app_server/
 ## Resources & Links
 
 ## Resources
-    Frontend
 - [Deployed Frontend](https://volunteer-liard.vercel.app/)
 
     Backend
