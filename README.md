@@ -17,32 +17,45 @@ Ensure you have the following installed on your system:
 ## Project Structure
 
 ```
-project/
-├── server/
-│   └── (Flask project files)
-└── README.md
+bettkev-volunteer_matching_app_server/
+    ├── README.md
+    ├── Pipfile
+    ├── app.py
+    ├── seed.py
+    ├── instance/
+    │   └── app.db
+    ├── migrations/
+    │   ├── README
+    │   ├── alembic.ini
+    │   ├── env.py
+    │   ├── script.py.mako
+    │   ├── __pycache__/
+    │   └── versions/
+    │       ├── 5b6f25736a53_initial_migration.py
+    │       └── __pycache__/
+    ├── models/
+    │   ├── __init__.py
+    │   ├── models.py
+    │   └── __pycache__/
+    └── routes/
+        ├── application_routes.py
+        ├── project_routes.py
+        ├── user_routes.py
+        └── __pycache__/                                       
 ```
-
 ---
 
 ## Setup Instructions
 
-1. **Create and Navigate to the Project Directory**
+1. **Navigate to the Project Directory**
 
    ```bash
-   mkdir project
    cd project
-   mkdir server
+   cd server
    code .
    ```
 
-2. **Navigate to the `server` Directory**
-
-   ```bash
-   cd server
-   ```
-
-3. **Install Dependencies**
+2. **Install Dependencies**
 
    Use `pipenv` to install the required Python packages:
 
@@ -50,30 +63,13 @@ project/
    pipenv install flask flask_cors flask_restful
    ```
 
-4. **Activate the Virtual Environment**
+3. **Activate the Virtual Environment**
 
    ```bash
    pipenv shell
    ```
 
-5. **Create the Application File**
-
-   Inside the `server` directory, create a file named `app.py` with the following basic structure:
-
-   ```python
-   from flask import Flask
-
-   app = Flask(__name__)
-
-   @app.route('/')
-   def home():
-       return "Hello, Flask!"
-
-   if __name__ == "__main__":
-       app.run(debug=True)
-   ```
-
-6. **Run the Application**
+4. **Run the Application**
 
    Ensure you're in the virtual environment and run the Flask app:
 
@@ -101,7 +97,7 @@ project/
    http://127.0.0.1:5000
    ```
 
-   You should see the message: `Hello, Flask!`
+   You should see the API documentation page
 
 ---
 
@@ -112,7 +108,9 @@ project/
 
 ---
 
-## Resources
+## Resources & Links
+
+- [Deployed Link](https://volunteer-matching-app-server.onrender.com/)
 
 - [Flask Documentation](https://flask.palletsprojects.com/)
 - [Pipenv Documentation](https://pipenv.pypa.io/)
