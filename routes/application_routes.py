@@ -85,3 +85,34 @@ def get_user_applications():
         "message": "Fetched applied projects successfully.",
         "data": applied_projects
     }), 200
+
+
+@application_routes.route('/projects/<int:project_id>/cancel', methods=['DELETE'])
+@jwt_required()
+def cancel_application(project_id):
+    """Allows a logged-in volunteer to cancel their application for a project."""
+    
+    # Get the current user ID from the JWT token
+    user_id = get_jwt_identity()
+    
+    # Fetch the user details
+    user = User.query.get(user_id)
+    
+    if not user:
+        return jsonify({"success": False, "message": "User not found."}), 404
+
+    # Ensure the user has the role of 'volunteer'
+    if user.role != 'volunteer':
+        return jsonify({"success": False, "message": "Only volunteers can cancel applications."}), 403
+
+    # Check if the application exists
+    application = Application.query.filter_by(user_id=user_id, project_id=project_id).first()
+    
+    if not application:
+        return jsonify({"success": False, "message": "Application not found."}), 404
+
+    # Delete the application
+    db.session.delete(application)
+    db.session.commit()
+
+    return jsonify({"success": True, "message": "Application canceled successfully!"}), 200
