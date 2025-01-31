@@ -110,7 +110,12 @@ bettkev-volunteer_matching_app_server/
 
 ## Resources & Links
 
-- [Deployed Link](https://volunteer-matching-app-server.onrender.com/)
+## Resources
+    Frontend
+- [Deployed Frontend](https://volunteer-liard.vercel.app/)
 
-- [Flask Documentation](https://flask.palletsprojects.com/)
-- [Pipenv Documentation](https://pipenv.pypa.io/)
+    Backend
+- [Deployed Backend](https://volunteer-matching-app-server.onrender.com/)
+
+    Youtube Video Demo
+- [Video Demo](https://youtu.be/fqeVZi8tRKk)
