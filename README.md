@@ -110,12 +110,8 @@ bettkev-volunteer_matching_app_server/
 
 ## Resources & Links
 
-## Resources
-    Frontend
 - [Deployed Frontend](https://volunteer-liard.vercel.app/)
 
-    Backend
 - [Deployed Backend](https://volunteer-matching-app-server.onrender.com/)
 
-    Youtube Video Demo
-- [Video Demo](https://youtu.be/fqeVZi8tRKk)
+- [Youtube Video Demo](https://youtu.be/fqeVZi8tRKk)
