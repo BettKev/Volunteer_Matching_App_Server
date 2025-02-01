@@ -60,7 +60,7 @@ def index():
         .container {
             max-width: 900px;
             background: #1e1e1e;
-            padding: 30px;
+            padding: 20px;
             border-radius: 8px;
             box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.1);
             text-align: center;
@@ -78,36 +78,32 @@ def index():
             font-weight: bold;
             color: #bb86fc;
         }
-        pre {
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
             background: #292929;
-            padding: 15px;
             border-radius: 5px;
-            overflow-x: auto;
-            border-left: 4px solid #bb86fc;
-            font-size: 14px;
-            color: #e0e0e0;
-            text-align: left;
+            overflow: hidden;
         }
-        .section {
-            margin-bottom: 30px;
-            text-align: left;
-        }
-        .endpoint {
-            background: #2a2a2a;
+        th, td {
+            border: 1px solid #444;
             padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
+            text-align: left;
+        }
+        th {
+            background: #2a2a2a;
+            color: #bb86fc;
         }
         .auth-required {
             background: #cf6679;
             color: white;
-            padding: 5px;
+            padding: 4px;
             border-radius: 3px;
             font-size: 12px;
-            margin-left: 10px;
         }
         .footer {
-            margin-top: 30px;
+            margin-top: 20px;
             font-size: 14px;
             color: #b0b0b0;
         }
@@ -127,174 +123,95 @@ def index():
 
         <div class="section">
             <h2>Authentication</h2>
-
-            <div class="endpoint">
-                <h3>Register</h3>
-                <p><code>POST /register</code></p>
-                <p>Registers a new user (volunteer or organization).</p>
-                <pre>
-Request:
-{
-    "name": "John Doe",
-    "email": "john@example.com",
-    "password": "password123",
-    "role": "volunteer"
-}
-
-Response:
-{
-    "message": "User registered successfully",
-    "user_id": 123
-}
-                </pre>
-            </div>
-
-            <div class="endpoint">
-                <h3>Login</h3>
-                <p><code>POST /login</code></p>
-                <p>Authenticates a user and returns a JWT token.</p>
-                <pre>
-Request:
-{
-    "email": "john@example.com",
-    "password": "password123"
-}
-
-Response:
-{
-    "access_token": "jwt_token_here"
-}
-                </pre>
-            </div>
-
-            <div class="endpoint">
-                <h3>Fetch User Details</h3>
-                <p><code>GET /details</code> <span class="auth-required">Requires JWT Token</span></p>
-                <p>Fetches the authenticated user's details.</p>
-                <pre>
-Response:
-{
-    "user_id": 123,
-    "name": "John Doe",
-    "email": "john@example.com",
-    "role": "volunteer"
-}
-                </pre>
-            </div>
-
-            <div class="endpoint">
-                <h3>Update User</h3>
-                <p><code>PUT /update</code> <span class="auth-required">Requires JWT Token</span></p>
-                <p>Updates the authenticated user's details.</p>
-                <pre>
-Request:
-{
-    "name": "John Doe Updated",
-    "password": "newpassword"
-}
-
-Response:
-{
-    "message": "User updated successfully!"
-}
-                </pre>
-            </div>
-
-            <div class="endpoint">
-                <h3>Delete User Account</h3>
-                <p><code>DELETE /delete</code> <span class="auth-required">Requires JWT Token</span></p>
-                <p>Deletes the currently authenticated user's account.</p>
-                <pre>
-Response:
-{
-    "message": "User account deleted successfully!"
-}
-                </pre>
-            </div>
+            <table>
+                <tr>
+                    <th>Endpoint</th>
+                    <th>Method</th>
+                    <th>Description</th>
+                    <th>Auth</th>
+                </tr>
+                <tr>
+                    <td><code>/register</code></td>
+                    <td>POST</td>
+                    <td>Registers a new user (volunteer or organization).</td>
+                    <td>❌</td>
+                </tr>
+                <tr>
+                    <td><code>/login</code></td>
+                    <td>POST</td>
+                    <td>Authenticates user & returns JWT token.</td>
+                    <td>❌</td>
+                </tr>
+                <tr>
+                    <td><code>/details</code></td>
+                    <td>GET</td>
+                    <td>Fetches authenticated user details.</td>
+                    <td><span class="auth-required">✔️ JWT</span></td>
+                </tr>
+                <tr>
+                    <td><code>/update</code></td>
+                    <td>PUT</td>
+                    <td>Updates user details.</td>
+                    <td><span class="auth-required">✔️ JWT</span></td>
+                </tr>
+                <tr>
+                    <td><code>/delete</code></td>
+                    <td>DELETE</td>
+                    <td>Deletes user account.</td>
+                    <td><span class="auth-required">✔️ JWT</span></td>
+                </tr>
+            </table>
         </div>
 
         <div class="section">
             <h2>Projects</h2>
-
-            <div class="endpoint">
-                <h3>Create a Project</h3>
-                <p><code>POST /projects</code> <span class="auth-required">Only organizations</span></p>
-                <pre>
-Request:
-{
-    "title": "Community Cleanup",
-    "description": "A project to clean up the park."
-}
-
-Response:
-{
-    "message": "Project created successfully",
-    "project_id": 45
-}
-                </pre>
-            </div>
-
-            <div class="endpoint">
-                <h3>View All Projects</h3>
-                <p><code>GET /projects</code> <span class="auth-required">Authenticated users</span></p>
-                <pre>
-Response:
-[
-    {
-        "project_id": 45,
-        "title": "Community Cleanup",
-        "description": "A project to clean up the park.",
-        "organization_id": 12
-    }
-]
-                </pre>
-            </div>
-
-            <div class="endpoint">
-                <h3>Apply for a Project</h3>
-                <p><code>POST /projects/:id/apply</code> <span class="auth-required">Only volunteers</span></p>
-                <pre>
-Response:
-{
-    "message": "Application submitted successfully!"
-}
-                </pre>
-            </div>
-
-            <div class="endpoint">
-                <h3>View User Applications</h3>
-                <p><code>GET /user/applications</code> <span class="auth-required">Only volunteers</span></p>
-                <pre>
-Response:
-[
-    {
-        "project_id": 45,
-        "project_title": "Community Cleanup",
-        "project_description": "A project to clean up the park.",
-        "project_status": "Open"
-    }
-]
-                </pre>
-            </div>
-
-            <div class="endpoint">
-                <h3>Cancel Application</h3>
-                <p><code>DELETE /projects/:id/cancel</code> <span class="auth-required">Only volunteers</span></p>
-                <pre>
-Response:
-{
-    "message": "Application canceled successfully!"
-}
-                </pre>
-            </div>
+            <table>
+                <tr>
+                    <th>Endpoint</th>
+                    <th>Method</th>
+                    <th>Description</th>
+                    <th>Auth</th>
+                </tr>
+                <tr>
+                    <td><code>/projects</code></td>
+                    <td>POST</td>
+                    <td>Creates a new project.</td>
+                    <td><span class="auth-required">✔️ Org</span></td>
+                </tr>
+                <tr>
+                    <td><code>/projects</code></td>
+                    <td>GET</td>
+                    <td>Fetches all projects.</td>
+                    <td><span class="auth-required">✔️ JWT</span></td>
+                </tr>
+                <tr>
+                    <td><code>/projects/:id/apply</code></td>
+                    <td>POST</td>
+                    <td>Apply for a project.</td>
+                    <td><span class="auth-required">✔️ Volunteer</span></td>
+                </tr>
+                <tr>
+                    <td><code>/user/applications</code></td>
+                    <td>GET</td>
+                    <td>View user's applications.</td>
+                    <td><span class="auth-required">✔️ Volunteer</span></td>
+                </tr>
+                <tr>
+                    <td><code>/projects/:id/cancel</code></td>
+                    <td>DELETE</td>
+                    <td>Cancel application.</td>
+                    <td><span class="auth-required">✔️ Volunteer</span></td>
+                </tr>
+            </table>
         </div>
 
         <div class="footer">
             <p>For any questions or support, contact us at <a href="mailto:support@volunteerapi.com">support@volunteerapi.com</a></p>
             <p>&copy; 2025 Volunteer Matching API</p>
         </div>
-    </d
-
+    </div>
+</body>
+</html>
 
     """
 
